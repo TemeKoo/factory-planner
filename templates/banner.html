@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/banner.css') }}">
+
+<div class="navbar-background"></div>
+<div class="navbar">
+    <a href="/"><img src="{{ url_for('static',filename='img/logo_vert.png') }}" height="95" alt="Satisfactory planner logo"></a>
+    <a href="/items" class="navbar-button">Items & machines</a>
+    <a href="/calculator" class="navbar-button">Calculator</a>
+    <a href="/production_lines" class="navbar-button">Production lines</a>
+    <a href="/factory" class="navbar-button">Factory</a>
+</div>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<title>Satisfactory planner</title>
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/all.css') }}">
+
+{% include "banner.html" %}
+
+<form action="/calculator/result" method="GET">
+
+    <label for="items">Select item:</label>
+    <select name="item" id="items" required>
+        {% for item in items_list %}
+        <option value={{ item[0] }}>{{ item[1] }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <label for="amount">Amount per minute:</label>
+    <input type="number" id="amount" name="amount" min="1" required>
+    <br>
+    <input type="submit" value="Calculate">
+</form>
+
+
+
