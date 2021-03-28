@@ -184,11 +184,11 @@ def insertToDatabase():
     
     print("Machines inserted!")
 
-    sql = text("INSERT INTO recipes (name, display_name, time, machine_id) VALUES (:name, :display_name, :time, :machine_id) RETURNING id")
+    sql_recipe = text("INSERT INTO recipes (name, display_name, time, machine_id) VALUES (:name, :display_name, :time, :machine_id) RETURNING id")
     sql_input = text("INSERT INTO recipe_inputs (recipe_id, item_id, amount) VALUES (:recipe_id, :item_id, :amount)")
-    sql_output = text("INSERT INTO recipe_outputs (recipe_id, output_id, amount, is_machine) VALUES (:recipe_id, :output_id, :amount, :is_machine)")
-    sql_output_item = text("INSERT INTO item_or_machine (item_id) VALUES (:item_id) RETURNING id")
-    sql_output_machine = text("INSERT INTO item_or_machine (machine_id) VALUES (:machine_id) RETURNING id")
+    sql_output = text("INSERT INTO recipe_outputs (recipe_id, amount, is_machine) VALUES (:recipe_id, :amount, :is_machine) RETURNING id")
+    sql_output_item = text("INSERT INTO item_or_machine (item_id, output_id) VALUES (:part_id, :output_id)")
+    sql_output_machine = text("INSERT INTO item_or_machine (machine_id, output_id) VALUES (:part_id, :output_id)")
     for recipe in recipes:
         inputs = recipe[3]
         outputs = recipe[4]
@@ -197,23 +197,21 @@ def insertToDatabase():
         if [i for i in inputs if i[0] in names] and [i for i in outputs if i[0] in names] and [i for i in producers if i in machines_names]:
             producer = [i for i in producers if i not in ("WorkBenchComponent", "WorkshopComponent", "BuildableAutomatedWorkBench")][0]
             machine_id = db.execute(text("SELECT id FROM machines WHERE name = :name"), {"name": producer}).fetchone()[0]
-            recipe_id = db.execute(sql, {"name": recipe[0], "display_name": recipe[1], "time": recipe[2], "machine_id": machine_id}).fetchone()[0]
+            recipe_id = db.execute(sql_recipe, {"name": recipe[0], "display_name": recipe[1], "time": recipe[2], "machine_id": machine_id}).fetchone()[0]
             
             for item in inputs:
                 item_id = db.execute(text("SELECT id FROM items WHERE name = :name"), {"name": item[0]}).fetchone()[0]
                 db.execute(sql_input, {"recipe_id": recipe_id, "item_id": item_id, "amount": item[1]})
             
             for item in outputs:
-                if item[0] in machines_names:
-                    machine_id = db.execute(text("SELECT id FROM machines WHERE name = :name"), {"name": item[0]}).fetchone()[0]
-                    output_id = db.execute(sql_output_machine, {"machine_id": machine_id}).fetchone()[0]
-                    is_machine = True
-                else:
-                    item_id = db.execute(text("SELECT id FROM items WHERE name = :name"), {"name": item[0]}).fetchone()[0]
-                    output_id = db.execute(sql_output_item, {"item_id": item_id}).fetchone()[0]
-                    is_machine = False
+                is_machine = item[0] in machines_names
+                output_id = db.execute(sql_output, {"recipe_id": recipe_id, "amount": item[1], "is_machine": is_machine}).fetchone()[0]
 
-                db.execute(sql_output, {"recipe_id": recipe_id, "output_id": output_id, "amount": item[1], "is_machine": is_machine})
+                sql = text("SELECT id FROM machines WHERE name = :name" if is_machine else "SELECT id FROM items WHERE name = :name")
+                part_id = db.execute(sql, {"name": item[0]}).fetchone()[0]
+
+                sql = sql_output_machine if is_machine else sql_output_item
+                db.execute(sql, {"part_id": part_id, "output_id": output_id})
 
     print("Recipes inserted!")
 
