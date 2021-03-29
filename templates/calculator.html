@@ -1,26 +1,41 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-
-<title>Satisfactory planner</title>
-
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/all.css') }}">
 
 {% include "banner.html" %}
 
-<form action="/calculator/result" method="GET">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/calculator.css') }}">
 
-    <label for="items">Select item:</label>
-    <select name="item" id="items" required>
-        {% for item in items_list %}
-        <option value={{ item[0] }}>{{ item[1] }}</option>
+<div class="side-panel">
+    {% for i in range(20) %}
+        <div class="side-panel-row">
+        {% for j in range(i+1)%}
+            <div class="side-panel-item">testi</div>
         {% endfor %}
-    </select>
-    <br>
-    <label for="amount">Amount per minute:</label>
-    <input type="number" id="amount" name="amount" min="1" required>
-    <br>
-    <input type="submit" value="Calculate">
-</form>
+        </div>
+    {% endfor %}
+</div>
 
-
-
+<div>
+    Selected end item: {{ end_item[0] }}, {{ end_item[1] }} per minute
+    <form action="/calculator" method="GET">
+        <input type="submit" value="Change">
+    </form>
+</div>
+<br>
+<div>
+    <form action="/calculator" method="GET">
+        <input type="hidden" name="end_item" value="{{ end_item[2] }}">
+        <input type="hidden" name="end_amount" value="{{ end_item[1] }}">
+        {% for recipe_id in recipes %}
+        <input type="hidden" name="{{ 'recipe_' ~ recipe_id }}" value="{{ recipes[recipe_id] }}">
+        {% endfor %}
+        {% if missing_id %}
+            <label for="recipe"> Select recipe for {{ items[missing_id][0] }}:</label>
+            <select name="{{ 'recipe_' ~ missing_id }}" id="recipe" required>
+                {% for recipe in recipe_select %}
+                <option value="{{ recipe[0] }}">{{ recipe[1] }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+        <input type="submit" value ="Select">
+    </form>
+</div>

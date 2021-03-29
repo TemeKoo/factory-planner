@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+{% include "banner.html" %}
+
+<form action="/calculator" method="GET">
+    <label for="item">Select item: </label>
+    <select name="end_item" id="item" required>
+        {% for item in all_items %}
+        <option value="{{ item[0] }}">{{ item[1] }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <label for="amount">Amount per minute: </label>
+    <input type="number" id="amount" name="end_amount" min="1" required>
+    <br>
+    <input type="submit" value ="Select">
+</form>

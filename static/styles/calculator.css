@@ -1,0 +1,31 @@
+.side-panel {
+    width: 45%;
+    position: absolute;
+    top: 130px;
+    right: 10px;
+    bottom: 10px;
+    background-color: #424242;
+    border-style: solid;
+    border-color: #1b1b1b;
+    justify-content: center;
+    overflow: auto;
+}
+
+.side-panel-row {
+    height: 60px;
+    width: fit-content;
+    flex: 1 1 auto;
+    margin: 2px 0;
+    display: flex;
+}
+
+.side-panel-item {
+    height: 50px;
+    width: 150px;
+    margin: 3px;
+    flex-shrink: 0;
+    background-color: #e69705;
+    border-style: solid;
+    border-color: #1b1b1b;
+    text-align: center;
+}
