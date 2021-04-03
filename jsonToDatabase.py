@@ -182,6 +182,8 @@ def insertToDatabase():
         machines_names.append(machine[0])
         db.execute(sql, {"name": machine[0], "display_name": machine[1], "description": machine[2]})
     
+    machines_names.append("Converter")
+
     print("Machines inserted!")
 
     sql_recipe = text("INSERT INTO recipes (name, display_name, time, machine_id) VALUES (:name, :display_name, :time, :machine_id) RETURNING id")
@@ -196,7 +198,11 @@ def insertToDatabase():
         
         if [i for i in inputs if i[0] in names] and [i for i in outputs if i[0] in names] and [i for i in producers if i in machines_names]:
             producer = [i for i in producers if i not in ("WorkBenchComponent", "WorkshopComponent", "BuildableAutomatedWorkBench")][0]
-            machine_id = db.execute(text("SELECT id FROM machines WHERE name = :name"), {"name": producer}).fetchone()[0]
+            
+            if producer == "Converter":
+                machine_id = None
+            else:
+                machine_id = db.execute(text("SELECT id FROM machines WHERE name = :name"), {"name": producer}).fetchone()[0]
             recipe_id = db.execute(sql_recipe, {"name": recipe[0], "display_name": recipe[1], "time": recipe[2], "machine_id": machine_id}).fetchone()[0]
             
             for item in inputs:
