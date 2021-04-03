@@ -108,6 +108,8 @@ def jsonConverter():
 
                 recipes.append((name, display_name, time, ingredients, products, producers))
 
+            recipes.append(("Water", "Water", 1, [("Water", 1)], [("Water", 1)], ["WaterPump"]))
+
         elif native_class in ("Class'/Script/FactoryGame.FGBuildableManufacturer'", "Class'/Script/FactoryGame.FGBuildableResourceExtractor'", "Class'/Script/FactoryGame.FGBuildableWaterPump'"):
             machines_list = item["Classes"]
 
